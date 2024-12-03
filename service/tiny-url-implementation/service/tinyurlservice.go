@@ -5,6 +5,11 @@ import (
 	"github.com/belwals/minikube-k8s-demo-app/service/tiny-url-implementation/repository"
 )
 
+type IRestService interface {
+	GetFullURl(uniqueId string) (string, error)
+	GenerateShortUrl(url string) (string, error)
+}
+
 type TinuUrlService struct {
 	env  model.Environment
 	repo repository.ITinyUrlRepository
