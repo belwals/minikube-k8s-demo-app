@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -16,7 +17,7 @@ func initialize() dependency {
 	// injecting a logger to service and will be forarded to inner calls
 	getLogger := config.NewLogger()
 
-	return dependency{log: getLogger, server: http.NewServeMux(), port: 8080, address: "localhost"}
+	return dependency{log: getLogger, server: http.NewServeMux(), port: 8080, address: ""}
 }
 
 type dependency struct {
@@ -32,7 +33,7 @@ func main() {
 	// initialize api dependencieas and register APIs with server
 	registerApi(dep)
 	// starting http server on a given port
-	http.ListenAndServe(":8080", dep.server)
+	http.ListenAndServe(fmt.Sprintf(":%d", dep.port), dep.server)
 }
 
 func registerApi(dep dependency) {
