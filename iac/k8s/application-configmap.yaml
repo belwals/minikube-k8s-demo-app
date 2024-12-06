@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configmap
+data:
+  mongo-url: mongo-service
+  log_level: info

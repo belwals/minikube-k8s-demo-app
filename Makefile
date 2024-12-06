@@ -1,7 +1,7 @@
 TINY_URL_SERVICE_NAME=tiny-url-service
 
 ifeq ($(TINY_URL_SERVICE_TAG_VERSION),)
-	TINY_URL_SERVICE_TAG_VERSION=1.0
+	TINY_URL_SERVICE_TAG_VERSION=2.0
 endif
 
 ifeq ($(IMAGE_REPO_USERNAME),)
@@ -19,3 +19,8 @@ build-service:
 .PHONY: push-service
  push-service:
 	docker push $(TINY_SERVICE_IMAGE_URL)
+
+.PHONY: run-service
+run-service:
+	docker run -d -p 8080:8080 --name tiny-url-service $(TINY_SERVICE_IMAGE_URL)
+

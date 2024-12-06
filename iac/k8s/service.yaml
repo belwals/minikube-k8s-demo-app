@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tiny-url-deployment
+  labels:
+    app: tiny-url
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tiny-url
+  template:
+    metadata:
+      labels:
+        app: tiny-url
+    spec:
+      containers:
+      - name: tiny-url
+        image: saurabhbelwal01/tiny-url-service:2.0
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: application-secret
+              key: mongo-user
+        - name: MONGO_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: application-secret
+              key: mongo-password
+        - name: MONGO_DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: application-configmap
+              key: mongo-url
+  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tiny-url-service
+spec:
+  type: NodePort
+  selector:
+    app: tiny-url
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30100
