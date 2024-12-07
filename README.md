@@ -57,6 +57,10 @@
     * Minikube Dashboard: Use the Minikube dashboard to visualize your cluster and access the application's service.
     * kubectl Port-Forwarding: Use kubectl port-forward to expose the service locally.
     * NodePort Service: If you need external access, configure the service with type: NodePort.
+    * Docker desktop has restricted networking hence most of the option won;t be working hence try tunnel of minikube 
+      ```
+        minikube tunnel <service> [-n <namespace other than default>]
+      ```
 
 ## Additional Notes:
 

@@ -54,6 +54,7 @@ func registerApi(dep dependency) {
 	restController := controller.NewRestController(log, tinyService)
 
 	// Registering APIs
+	dep.server.Handle(constants.ApiPathHonePageUrl, controller.ResponseHandler(restController.GettHomePage))
 	dep.server.Handle(constants.ApiPathGetFullUrl, controller.ResponseHandler(restController.GetFullUrl))
 	dep.log.Info("Registered API path", "url", constants.ApiPathGetFullUrl)
 

@@ -23,6 +23,21 @@ func NewRestController(log *slog.Logger, service service.IRestService) RestUrlCo
 	}
 }
 
+func (cntrler *RestUrlController) GettHomePage(ctx context.Context, request ApiRequest) (ApiResponse, error) {
+
+	cntrler.log.Info("accessing home route of tiny-url-service")
+	resp := `
+	<h1>Welcome to the webpage of Tiny URL service </h1>
+	<p>
+		Thanks for reaching out, this process is under developed.
+		Try below route for doing the url related queries
+		1. GET /v1/get-url?key=<shortend url key>
+		2. POST /v1/generate-url with body {"url": "<sample url>"}
+	</p>
+	`
+	return buildApiRespose(resp, http.StatusOK), nil
+}
+
 func (cntrler *RestUrlController) GetFullUrl(ctx context.Context, request ApiRequest) (ApiResponse, error) {
 
 	cntrler.log.Info("received request with", "request", request.String())
