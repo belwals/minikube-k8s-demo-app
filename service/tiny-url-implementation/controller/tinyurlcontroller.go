@@ -46,7 +46,7 @@ func (cntrler *RestUrlController) GetFullUrl(ctx context.Context, request ApiReq
 	if len(tinyIdentifiers) == 0 {
 		return buildApiRespose("bad request", http.StatusBadRequest), nil
 	}
-	resp, err := cntrler.service.GetFullURl(tinyIdentifiers[0])
+	resp, err := cntrler.service.GetFullURl(ctx, tinyIdentifiers[0])
 	if err != nil {
 		return buildApiRespose(resp, http.StatusInternalServerError), nil
 	}
@@ -73,7 +73,7 @@ func (cntrler *RestUrlController) GenerateShortUrl(ctx context.Context, request 
 		return buildApiRespose(errorBody, http.StatusBadRequest), nil
 	}
 
-	resp, err := cntrler.service.GenerateShortUrl(requestPayload.Url)
+	resp, err := cntrler.service.GenerateShortUrl(ctx, requestPayload.Url)
 	if err != nil {
 		return buildApiRespose(resp, http.StatusInternalServerError), nil
 	}

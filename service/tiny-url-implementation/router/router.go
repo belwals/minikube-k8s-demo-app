@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -44,10 +45,12 @@ func registerApi(dep dependency) {
 	// inject required env variable for the service
 
 	// create dependency for initialization
-	tinyUrlRepo, err := repository.NewTinyUrlRepo(env)
+	mongoClient, err := config.NewMongoInput(env.MongoUsername, env.MongoPassword, env.MongoClusterUrl).NewClient(context.TODO())
 	if err != nil {
 		panic("unable to create repository")
 	}
+	tinyUrlRepo := repository.Client(*mongoClient)
+
 	// Dependency initialization
 	tinyService := service.NewTinyUrlService(env, tinyUrlRepo)
 
