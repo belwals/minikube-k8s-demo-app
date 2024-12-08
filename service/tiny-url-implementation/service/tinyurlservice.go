@@ -1,13 +1,17 @@
 package service
 
 import (
+	"context"
+
 	"github.com/belwals/minikube-k8s-demo-app/service/tiny-url-implementation/model"
 	"github.com/belwals/minikube-k8s-demo-app/service/tiny-url-implementation/repository"
 )
 
+const TinyUrlDatabaseName = "tiny-url"
+
 type IRestService interface {
-	GetFullURl(uniqueId string) (string, error)
-	GenerateShortUrl(url string) (string, error)
+	GetFullURl(ctx context.Context, uniqueId string) (string, error)
+	GenerateShortUrl(ctx context.Context, url string) (string, error)
 }
 
 type TinuUrlService struct {
@@ -22,11 +26,9 @@ func NewTinyUrlService(env model.Environment, repo repository.ITinyUrlRepository
 	}
 }
 
-func (service TinuUrlService) GetFullURl(uniqueId string) (string, error) {
-	// TODO: dummy implementation
-	return "Dummy URL", nil
+func (service TinuUrlService) GetFullURl(ctx context.Context, uniqueId string) (string, error) {
+	return service.repo.GetFullUrl(ctx, TinyUrlDatabaseName, uniqueId)
 }
-func (service TinuUrlService) GenerateShortUrl(url string) (string, error) {
-	// TODO: dummy implementation
-	return "Dummy Generated", nil
+func (service TinuUrlService) GenerateShortUrl(ctx context.Context, url string) (string, error) {
+	return service.repo.GenerateShortUrl(ctx, TinyUrlDatabaseName, url)
 }
