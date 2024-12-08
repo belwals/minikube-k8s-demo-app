@@ -33,7 +33,7 @@ type MongoClient struct {
 
 func (input MongoConnectInput) NewClient(ctx context.Context) (*MongoClient, error) {
 
-	connectionString := fmt.Sprintf("mongodb+srv://%s:%s@%s?retryWrites=true&writeConcern=majority",
+	connectionString := fmt.Sprintf("mongodb://%s:%s@%s",
 		input.userName, input.password, input.clusterUrl,
 	)
 

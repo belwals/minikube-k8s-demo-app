@@ -5,6 +5,7 @@ go 1.22.2
 require go.mongodb.org/mongo-driver v1.17.1
 
 require (
+	github.com/caarlos0/env/v11 v11.2.2
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.6.0
 	github.com/klauspost/compress v1.13.6 // indirect

@@ -21,6 +21,7 @@
     ```
     * If you want to push the image to a registry like Docker Hub, use this command, in makefile it expects a valid repo path.
 
+3. Pull the image in Minikube if not pused to docker hub repo.
 
 3. Create a Kubernetes Namespace:
     ```

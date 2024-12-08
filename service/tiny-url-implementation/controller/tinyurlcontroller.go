@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"net/http"
 
@@ -46,9 +45,19 @@ func (cntrler *RestUrlController) GetFullUrl(ctx context.Context, request ApiReq
 	if len(tinyIdentifiers) == 0 {
 		return buildApiRespose("bad request", http.StatusBadRequest), nil
 	}
-	resp, err := cntrler.service.GetFullURl(ctx, tinyIdentifiers[0])
+	identifier := tinyIdentifiers[0]
+	fullUrl, err := cntrler.service.GetFullURl(ctx, identifier)
 	if err != nil {
-		return buildApiRespose(resp, http.StatusInternalServerError), nil
+		return buildApiRespose(fullUrl, http.StatusInternalServerError), nil
+	}
+
+	if len(fullUrl) == 0 {
+		return buildApiRespose("not found full url corrospond to provided key", http.StatusBadRequest), nil
+	}
+
+	resp := model.TinyUrlResponse{
+		Url:         fullUrl,
+		ShortUrlKey: identifier,
 	}
 
 	return buildApiRespose(resp, http.StatusOK), nil
@@ -57,15 +66,15 @@ func (cntrler *RestUrlController) GetFullUrl(ctx context.Context, request ApiReq
 func (cntrler *RestUrlController) GenerateShortUrl(ctx context.Context, request ApiRequest) (ApiResponse, error) {
 
 	cntrler.log.Info("received request with", "body", request.Body)
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil || bodyBytes == nil || len(bodyBytes) == 0 {
+
+	if request.Body == nil {
 		errorBody := struct {
 			Msg string
 		}{Msg: "Invalid request body"}
 		return buildApiRespose(errorBody, http.StatusBadRequest), nil
 	}
 	var requestPayload model.RequestForUrlShortening
-	err = json.Unmarshal(bodyBytes, &requestPayload)
+	err := json.Unmarshal(request.Body, &requestPayload)
 	if err != nil {
 		errorBody := struct {
 			Msg string
@@ -73,9 +82,14 @@ func (cntrler *RestUrlController) GenerateShortUrl(ctx context.Context, request 
 		return buildApiRespose(errorBody, http.StatusBadRequest), nil
 	}
 
-	resp, err := cntrler.service.GenerateShortUrl(ctx, requestPayload.Url)
+	shortendUrl, err := cntrler.service.GenerateShortUrl(ctx, requestPayload.Url)
 	if err != nil {
-		return buildApiRespose(resp, http.StatusInternalServerError), nil
+		return buildApiRespose(shortendUrl, http.StatusInternalServerError), nil
+	}
+
+	resp := model.TinyUrlResponse{
+		Url:         requestPayload.Url,
+		ShortUrlKey: shortendUrl,
 	}
 
 	return buildApiRespose(resp, http.StatusOK), nil

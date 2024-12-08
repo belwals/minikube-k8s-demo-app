@@ -10,7 +10,7 @@ import (
 
 type ApiRequest struct {
 	Headers    map[string][]string
-	Body       io.Reader
+	Body       []byte
 	PathParam  map[string]any
 	QueryParam map[string][]string
 	Method     string
@@ -33,9 +33,14 @@ func ResponseHandler(handler CustomHandler) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		Ctx := r.Context()
+		var body []byte
+		// reading incoming request body and forwarding it as byte array
+		if r.Body != nil {
+			body, _ = io.ReadAll(r.Body)
+		}
 		request := ApiRequest{
 			Headers:    r.Header,
-			Body:       r.Body,
+			Body:       body,
 			Method:     r.Method,
 			QueryParam: r.URL.Query(),
 		}

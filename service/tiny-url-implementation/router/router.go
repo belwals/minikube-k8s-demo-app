@@ -12,20 +12,26 @@ import (
 	"github.com/belwals/minikube-k8s-demo-app/service/tiny-url-implementation/model"
 	"github.com/belwals/minikube-k8s-demo-app/service/tiny-url-implementation/repository"
 	"github.com/belwals/minikube-k8s-demo-app/service/tiny-url-implementation/service"
+	confgiEnv "github.com/caarlos0/env/v11"
 )
 
 func initialize() dependency {
 	// injecting a logger to service and will be forarded to inner calls
 	getLogger := config.NewLogger()
+	var env model.Environment
 
-	return dependency{log: getLogger, server: http.NewServeMux(), port: 8080, address: ""}
+	err := confgiEnv.Parse(&env)
+	if err != nil {
+		panic(fmt.Sprintf("unable to load env variable, error came %v", err))
+	}
+
+	return dependency{log: getLogger, server: http.NewServeMux(), env: env}
 }
 
 type dependency struct {
-	log     *slog.Logger
-	server  *http.ServeMux
-	port    int
-	address string
+	log    *slog.Logger
+	server *http.ServeMux
+	env    model.Environment
 }
 
 func main() {
@@ -34,14 +40,14 @@ func main() {
 	// initialize api dependencieas and register APIs with server
 	registerApi(dep)
 	// starting http server on a given port
-	http.ListenAndServe(fmt.Sprintf(":%d", dep.port), dep.server)
+	http.ListenAndServe(fmt.Sprintf(":%d", dep.env.Port), dep.server)
 }
 
 func registerApi(dep dependency) {
 	log := dep.log
 
 	log.Info("starting the setup of web server")
-	var env model.Environment
+	env := dep.env
 	// inject required env variable for the service
 
 	// create dependency for initialization
