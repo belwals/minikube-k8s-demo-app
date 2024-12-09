@@ -1,0 +1,41 @@
+name: my-application
+
+services: # define the services or containers that make up your application
+  tiny-url-service: # name of the first service
+    build: 
+      context: .
+      dockerfile: ./iac/Service.Dockerfile # name of the image to use for this service
+    container_name: tiny-url-service
+    ports: # list of ports to expose on the host machine
+      - "8080:8080"
+    depends_on: # list of services that this service depends on
+      mongo-db:
+        condition: service_healthy
+    environment:
+      - MONGO_CLUSTER_URL=mongo-db:27017 #using service reference instead of localhost
+      - MONGO_USERNAME=mongouser
+      - MONGO_PASSWORD=mongopassword
+      - LOG_LEVEL=INFO
+      - PORT=8080
+    networks:
+      - app-network
+
+  mongo-db: # name of the second service
+    image: mongo:5.0 # path to the directory containing the Dockerfile for this service
+    environment: # list of environment variables to pass to this service
+      - MONGO_INITDB_ROOT_USERNAME=mongouser
+      - MONGO_INITDB_ROOT_PASSWORD=mongopassword
+      - MONGO_INITDB_DATABASE=tiny-url
+    ports:
+      - 27017:27017
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks: # define any custom networks used by the services
+  app-network: # name of the default network
+    driver: bridge # driver to use for this network
