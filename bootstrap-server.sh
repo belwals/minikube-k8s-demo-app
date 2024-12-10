@@ -1,6 +1,11 @@
 #!/bin/bash
 
-NAMESPACE=application
+NAMESPACE=$1
+if [$NAMESPACE == ""] 
+then 
+    echo "Namespace is not provided, using application as default namespace"
+    NAMESPACE=application
+fi
 # create namespace first
 # kubectl apply -f ./iac/k8s/application-namespace.yaml 
 kubectl create namespace $NAMESPACE

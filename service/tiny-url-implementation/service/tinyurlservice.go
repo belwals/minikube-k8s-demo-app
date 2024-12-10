@@ -30,5 +30,13 @@ func (service TinuUrlService) GetFullURl(ctx context.Context, uniqueId string) (
 	return service.repo.GetFullUrl(ctx, TinyUrlDatabaseName, uniqueId)
 }
 func (service TinuUrlService) GenerateShortUrl(ctx context.Context, url string) (string, error) {
+	shortKey, err := service.repo.IsShortUrlAlreadyGenerated(ctx, TinyUrlDatabaseName, url)
+	if err != nil {
+		return "", err
+	}
+	if len(shortKey) != 0 {
+		return shortKey, nil
+	}
+	// we didn't have record already in system hence creating a new one
 	return service.repo.GenerateShortUrl(ctx, TinyUrlDatabaseName, url)
 }
