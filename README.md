@@ -1,34 +1,39 @@
 # minikube-k8s-demo-app
 
-## Local run using docker compose
-Application runs on local, connecting to Mongo DB
-    ```
-        docker compose up
-    ```
-When application runs then can be invoked, by the below url
-    
-    //invoke API  to create a shortend URL
-    curl --location 'http://127.0.0.1:8080/v1/generate' \
-            --header 'Content-Type: application/json' \
-            --data '{
-                "url": "https://www.facebook.com"
-            }'
-        
-    -- response {"url":"https://www.facebook.com","shortendUrl":"9e39427f-6df6-47d8-a538-3bd05e8dc001"}
-
-     // Now pull the full url using shortend identifier
-    curl --location 'http://127.0.0.1:8080/v1/get-url?key=9e39427f-6df6-47d8-a538-3bd05e8dc001'
-    
-    -- response {"url": "https://www.facebook.com", "shortendUrl": "9e39427f-6df6-47d8-a538-3bd05e8dc001"}
-
-
-# Prerequisites
+# Prerequisites for application run
 
 * Docker: Ensure Docker is installed and running on your machine.
 * Golang: Install Golang to build the application.
 * Minikube: Set up Minikube to create a local Kubernetes cluster.
 
-# Steps to Run the Application Locally
+## Local run using docker compose without - **Minikube**
+Application runs on local, connecting to Mongo DB
+```
+docker compose up
+```
+
+When application runs then can be invoked, by the below url
+
+```  
+//invoke API  to create a shortend URL
+
+curl --location 'http://127.0.0.1:8080/v1/generate' \
+            --header 'Content-Type: application/json' \
+            --data '{
+                "url": "https://www.facebook.com"
+            }'
+        
+-- response {"url":"https://www.facebook.com","shortendUrl":"9e39427f-6df6-47d8-a538-3bd05e8dc001"}
+
+// Now pull the full url using shortend identifier
+    
+curl --location 'http://127.0.0.1:8080/v1/get-url?key=9e39427f-6df6-47d8-a538-3bd05e8dc001'
+    
+-- response {"url": "https://www.facebook.com", "shortendUrl": "9e39427f-6df6-47d8-a538-3bd05e8dc001"}
+
+```
+
+# Steps for k8s native application deployment and run
 
 1. Build the Application Image:
     ```
