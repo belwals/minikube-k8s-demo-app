@@ -17,15 +17,16 @@ import (
 
 func initialize() dependency {
 	// injecting a logger to service and will be forarded to inner calls
-	getLogger := config.NewLogger()
+	logger := config.NewLogger()
 	var env model.Environment
-
+	logger.Info("loading env variables from for application run")
 	err := confgiEnv.Parse(&env)
 	if err != nil {
 		panic(fmt.Sprintf("unable to load env variable, error came %v", err))
 	}
+	logger.Info("loaded env variables from for application run")
 
-	return dependency{log: getLogger, server: http.NewServeMux(), env: env}
+	return dependency{log: logger, server: http.NewServeMux(), env: env}
 }
 
 type dependency struct {
@@ -51,8 +52,10 @@ func registerApi(dep dependency) {
 	// inject required env variable for the service
 
 	// create dependency for initialization
+	log.Info("creating mongo connection for", "cluster", env.MongoClusterUrl, "username", env.MongoUsername)
 	mongoClient, err := config.NewMongoInput(env.MongoUsername, env.MongoPassword, env.MongoClusterUrl).NewClient(context.TODO())
 	if err != nil {
+		log.Error("unable to create mongo conection", "error", err)
 		panic("unable to create repository")
 	}
 	tinyUrlRepo := repository.Client(*mongoClient)

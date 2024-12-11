@@ -38,20 +38,23 @@ func (cntrler *RestUrlController) GettHomePage(ctx context.Context, request ApiR
 }
 
 func (cntrler *RestUrlController) GetFullUrl(ctx context.Context, request ApiRequest) (ApiResponse, error) {
-
-	cntrler.log.Info("received request with", "request", request.String())
+	log := cntrler.log
+	log.Info("received request with", "request", request.String())
 
 	tinyIdentifiers := request.QueryParam["key"]
 	if len(tinyIdentifiers) == 0 {
+		log.Error("invalid request required param 'key' is missing")
 		return buildApiRespose("bad request", http.StatusBadRequest), nil
 	}
 	identifier := tinyIdentifiers[0]
 	fullUrl, err := cntrler.service.GetFullURl(ctx, identifier)
 	if err != nil {
+		log.Error("error occurred while getting full url", "error", err)
 		return buildApiRespose(fullUrl, http.StatusInternalServerError), nil
 	}
 
 	if len(fullUrl) == 0 {
+		log.Error("no record found associated", "key", "")
 		return buildApiRespose("not found full url corrospond to provided key", http.StatusBadRequest), nil
 	}
 
@@ -64,13 +67,12 @@ func (cntrler *RestUrlController) GetFullUrl(ctx context.Context, request ApiReq
 }
 
 func (cntrler *RestUrlController) GenerateShortUrl(ctx context.Context, request ApiRequest) (ApiResponse, error) {
-
-	cntrler.log.Info("received request with", "body", request.Body)
-
+	log := cntrler.log
 	if request.Body == nil {
 		errorBody := struct {
 			Msg string
 		}{Msg: "Invalid request body"}
+		log.Error("invalid request recieved with the", "body", string(request.Body))
 		return buildApiRespose(errorBody, http.StatusBadRequest), nil
 	}
 	var requestPayload model.RequestForUrlShortening
@@ -79,11 +81,13 @@ func (cntrler *RestUrlController) GenerateShortUrl(ctx context.Context, request 
 		errorBody := struct {
 			Msg string
 		}{Msg: "Unable to parse incoming request payload"}
+		log.Error("error occurred while unmarshalling request", "body", string(request.Body), "err", err)
 		return buildApiRespose(errorBody, http.StatusBadRequest), nil
 	}
 
 	shortendUrl, err := cntrler.service.GenerateShortUrl(ctx, requestPayload.Url)
 	if err != nil {
+		log.Error("error occurred while generating url", "full_url", requestPayload.Url, "err", err)
 		return buildApiRespose(shortendUrl, http.StatusInternalServerError), nil
 	}
 

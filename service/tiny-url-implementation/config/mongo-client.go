@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -14,9 +15,13 @@ type MongoConnectInput struct {
 	clusterUrl string
 }
 
+func sanitizeString(str string) string {
+	return strings.TrimSpace(strings.ReplaceAll(str, "\n", ""))
+}
+
 func NewMongoInput(username, password, clusterUrl string) MongoConnectInput {
 	return MongoConnectInput{
-		userName: username, password: password, clusterUrl: clusterUrl,
+		userName: sanitizeString(username), password: sanitizeString(password), clusterUrl: sanitizeString(clusterUrl),
 	}
 }
 

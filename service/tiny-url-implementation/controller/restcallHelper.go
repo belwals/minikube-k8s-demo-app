@@ -45,6 +45,13 @@ func ResponseHandler(handler CustomHandler) http.HandlerFunc {
 			QueryParam: r.URL.Query(),
 		}
 
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("panic occurred while invoking API call")
+				WriteJson(w, http.StatusInternalServerError, "")
+			}
+		}()
+
 		resp, err := handler(Ctx, request)
 		if err != nil {
 			errorBody := fmt.Sprintf(`{"error: : %s}`, err.Error())
