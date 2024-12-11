@@ -87,7 +87,8 @@ curl --location 'http://127.0.0.1:8080/v1/get-url?key=9e39427f-6df6-47d8-a538-3b
     * NodePort Service: If you need external access, configure the service with type: NodePort.
     * Docker desktop has restricted networking hence most of the option won;t be working hence try tunnel of minikube 
       ```
-        minikube tunnel <service> [-n <namespace other than default>]
+        e.g. minikube service <service-name> [-n <namespace other than default>]
+        minikube service tiny-url-service -n application
       ```
 
 ## Additional Notes:

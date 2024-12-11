@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: tiny-url
-        image: saurabhbelwal01/tiny-url-service:2.0
+        image: saurabhbelwal01/tiny-url-service:9.0
         ports:
         - containerPort: 27017
         env:
@@ -35,7 +35,6 @@ spec:
             configMapKeyRef:
               name: application-configmap
               key: mongo-url
-  
 ---
 apiVersion: v1
 kind: Service
